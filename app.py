@@ -4,9 +4,9 @@ from pymongo import MongoClient
 
 app=Flask(__name__)
 
-hf_client=InferenceClient(token="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")
+hf_client=InferenceClient(token="")
 
-mon_client=MongoClient("mongodb+srv://mubeenghuri243_db_user:u8c9BZx6JWO92aWc@vector-search-practice.eu4zkpn.mongodb.net/?appName=vector-search-practice", tlsAllowInvalidCertificates=True)
+mon_client=MongoClient("", tlsAllowInvalidCertificates=True)
 
 db=mon_client["music_app"]
 db_collection=db["songs"]
