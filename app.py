@@ -1,12 +1,16 @@
 from flask import Flask  ,render_template , request , jsonify
 from huggingface_hub import InferenceClient
 from pymongo import MongoClient
+from dotenv import load_dotenv
+import os 
+load_dotenv()
+
 
 app=Flask(__name__)
 
-hf_client=InferenceClient(token="")
+hf_client=InferenceClient(token=os.getenv("HF_TOKEN"))
 
-mon_client=MongoClient("", tlsAllowInvalidCertificates=True)
+mon_client=MongoClient(os.getenv("MONGO_URI"), tlsAllowInvalidCertificates=True)
 
 db=mon_client["music_app"]
 db_collection=db["songs"]
