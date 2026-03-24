@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% set active_nav = 'search' %}
+
+{% block content %}
+<div class="search-bg">
+  <div class="topbar">
+    <a href="{{ url_for('home') }}" class="back">←</a>
+    <div class="tb-title">Search</div>
+    <button class="heart" id="heartBtn" onclick="toggleHeart()">♡</button>
+  </div>
+
+  <form action="{{ url_for('user_search') }}" method="POST">
+    <div class="searchbar">
+      <span>🔍</span>
+      <input type="text" name="search_query" placeholder="Search songs, artists...">
+    </div>
+    <div style="padding:0 20px 10px;display:flex;justify-content:flex-end;">
+      <button type="submit" style="padding:10px 20px;background:#ff6a1a;border:none;border-radius:12px;color:white;font-weight:700;font-size:13px;cursor:pointer;font-family:Inter,sans-serif;">Search</button>
+    </div>
+  </form>
+
+  <!-- Audio Upload Section -->
+  <form action="{{ url_for('upload_files') }}" method="POST" enctype="multipart/form-data">
+    <div class="audio-upload-wrap">
+      <div class="audio-upload-box">
+        <i class="fa-solid fa-microphone audio-icon"></i>
+        <div class="audio-lbl">Search by Audio</div>
+        <div class="audio-sub">Upload 5-10 sec clip</div>
+        <label class="audio-btn">
+          Choose Audio
+          <input type="file" name="audio" accept="audio/*" style="display:none;" onchange="showFileName(this)">
+        </label>
+        <div class="audio-fname" id="fileName">No file chosen</div>
+        <button type="submit" class="audio-submit">🔍 Identify Song</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="filters">
+    <button class="pill on">All</button>
+    <button class="pill">New Release</button>
+    <button class="pill">Trending</button>
+    <button class="pill">Top List</button>
+  </div>
+
+  <!-- Recommendations Section -->
+  {% if recommendations %}
+  <div class="sec-row">
+    <div class="sec-title">Recommended For You</div>
+    <a href="{{ url_for('playlist') }}" class="sec-all">See All</a>
+  </div>
+
+  {% set colors = ['t1','t2','t3','t4','t5','t6'] %}
+  {% set emojis = ['🎵','🎶','🎸','🎹','🥁','🎷'] %}
+
+  {% for song in recommendations %}
+  <a href="{{ url_for('player', index=loop.index0) }}" class="msong">
+    <div class="ms-thumb {{ colors[loop.index0 % 6] }}">{{ emojis[loop.index0 % 6] }}</div>
+    <div class="ms-info">
+      <div class="ms-name">{{ song.title }}</div>
+      <div class="ms-sub">{{ song.artist }} · {{ song.genre }}</div>
+    </div>
+    <div class="ms-play">▶</div>
+  </a>
+  {% endfor %}
+
+  {% else %}
+  <div class="sec-row">
+    <div class="sec-title">Top Daily Playlists</div>
+    <a href="{{ url_for('playlist') }}" class="sec-all">See All</a>
+  </div>
+  <div style="padding:20px;text-align:center;color:#555;font-size:13px;">
+    Enter your preferences to get recommendations 🎵
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleHeart() {
+  const btn = document.getElementById('heartBtn');
+  btn.classList.toggle('liked');
+  btn.textContent = btn.classList.contains('liked') ? '♥' : '♡';
+}
+document.querySelectorAll('.pill').forEach(p => {
+  p.addEventListener('click', function() {
+    document.querySelectorAll('.pill').forEach(x => x.classList.remove('on'));
+    this.classList.add('on');
+  });
+});
+function showFileName(input) {
+  const fileName = input.files[0] ? input.files[0].name : 'No file chosen';
+  document.getElementById('fileName').textContent = fileName;
+}
+</script>
+{% endblock %}

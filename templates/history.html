@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% set active_nav = 'player' %}
+
+{% block content %}
+<div class="playlist-bg">
+  <div class="topbar">
+    <a href="{{ url_for('home') }}" class="back">←</a>
+    <div class="tb-title">Watch History</div>
+    <div class="dots">···</div>
+  </div>
+
+  {% if history %}
+    {% set colors = ['t1','t2','t3','t4','t5','t6'] %}
+    {% set emojis = ['🎵','🎶','🎸','🎹','🥁','🎷'] %}
+    {% for song in history %}
+    <a href="{{ url_for('player', index=loop.index0) }}" class="plsong">
+      <div class="pls-thumb {{ colors[loop.index0 % 6] }}">{{ emojis[loop.index0 % 6] }}</div>
+      <div class="pls-info">
+        <div class="pls-name">{{ song.title }}</div>
+        <div class="pls-sub">{{ song.artist }} · {{ song.genre }}</div>
+        <div style="font-size:10px; color:#444; margin-top:2px;">
+          {{ song.played_at.strftime('%d %b %Y, %I:%M %p') }}
+        </div>
+      </div>
+      <div class="pls-play">▶</div>
+    </a>
+    {% endfor %}
+  {% else %}
+    <div style="padding:60px 20px; text-align:center; color:#555; font-size:14px;">
+      No watch history yet 🎵<br>
+      <span style="font-size:12px; color:#333;">Play some songs to see history</span>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

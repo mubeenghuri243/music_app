@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% set active_nav = 'search' %}
+
+{% block content %}
+<div class="search-bg">
+  <div class="topbar">
+    <a href="{{ url_for('home') }}" class="back">←</a>
+    <div class="tb-title">Search</div>
+    <button class="heart" id="heartBtn" onclick="toggleHeart()">♡</button>
+  </div>
+
+  <form action="{{ url_for('user_search') }}" method="POST">
+    <div class="searchbar">
+      <span>🔍</span>
+      <input type="text" name="search_query" placeholder="Search songs, artists...">
+    </div>
+    <div style="padding:0 20px 10px;display:flex;justify-content:flex-end;">
+      <button type="submit" style="padding:10px 20px;background:#ff6a1a;border:none;border-radius:12px;color:white;font-weight:700;font-size:13px;cursor:pointer;font-family:Inter,sans-serif;">Search</button>
+    </div>
+  </form>
+
+  <div class="filters">
+    <button class="pill on">All</button>
+    <button class="pill">New Release</button>
+    <button class="pill">Trending</button>
+    <button class="pill">Top List</button>
+  </div>
+  {% if recommendations %}
+  <div class="sec-row">
+    <div class="sec-title">Recommended For You</div>
+  </div>
+  {% for song in recommendations %}
+  <a href="{{ url_for('player', index=loop.index0) }}" class="msong">
+    <div class="ms-thumb t{{ (loop.index0 % 6) + 1 }}">🎵</div>
+    
+    <div class="ms-info">
+      <div class="ms-name">{{ song.title }}</div>
+      
+      <div class="ms-sub">{{ song.artist }} · {{ song.genre }}</div>
+    </div>
+    <div class="ms-play">▶</div>
+  </a>
+{% endfor %}
+
+{% endif %}
+
+  <div style="padding:0 20px;font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;">Curated &amp; trending</div>
+  <div class="curated-card">
+    <div class="cc-title">Trending Beats</div>
+    <div class="cc-sub">The original slow instrumental best playlists.</div>
+    <div class="cc-btns">
+      <div class="cc-btn cc-play">▶</div>
+      <div class="cc-btn cc-other">⬇</div>
+      <div class="cc-btn cc-other">♡</div>
+      <div class="cc-btn cc-other">···</div>
+    </div>
+  </div>
+
+  <div class="sec-row">
+    <div class="sec-title">Top Daily Playlists</div>
+    <a href="{{ url_for('playlist') }}" class="sec-all">See All</a>
+  </div>
+
+  <a href="{{ url_for('playlist') }}" class="msong">
+    <div class="ms-thumb t1">🎵</div>
+    <div class="ms-info"><div class="ms-name">Song Title 2</div><div class="ms-sub">Artist M · 7 Songs</div></div>
+    <div class="ms-play">▶</div>
+  </a>
+  <a href="{{ url_for('playlist') }}" class="msong">
+    <div class="ms-thumb t2">🎶</div>
+    <div class="ms-info"><div class="ms-name">Song Title 27</div><div class="ms-sub">Artist B · 7 Songs</div></div>
+    <div class="ms-play">▶</div>
+  </a>
+  <a href="{{ url_for('playlist') }}" class="msong">
+    <div class="ms-thumb t3">🎸</div>
+    <div class="ms-info"><div class="ms-name">Song Title 33</div><div class="ms-sub">Artist V · 7 Songs</div></div>
+    <div class="ms-play">▶</div>
+  </a>
+</div>
+
+
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+function toggleHeart() {
+  const btn = document.getElementById('heartBtn');
+  btn.classList.toggle('liked');
+  btn.textContent = btn.classList.contains('liked') ? '♥' : '♡';
+}
+document.querySelectorAll('.pill').forEach(p => {
+  p.addEventListener('click', function() {
+    document.querySelectorAll('.pill').forEach(x => x.classList.remove('on'));
+    this.classList.add('on');
+  });
+});
+</script>
+{% endblock %}

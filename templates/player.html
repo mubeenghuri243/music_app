@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% set active_nav = 'player' %}
+
+{% block phone_class %}player-phone{% endblock %}
+
+{% block content %}
+<div class="player-bg">
+  <div class="topbar">
+    <a href="{{ url_for('playlist') }}" class="back" style="background:rgba(255,255,255,0.08);">←</a>
+    <div class="tb-title">Now Playing</div>
+    <button class="heart" id="heartBtn" onclick="toggleHeart()">♡</button>
+  </div>
+
+  <div class="art-wrap">
+    <div class="art-circle spinning" id="disc">🎵</div>
+  </div>
+
+  <div class="song-row">
+    <div class="song-info">
+      {% if song %}
+        <div class="s-name-big">{{ song.title }}</div>
+        <div class="s-artist">{{ song.artist }}</div>
+      {% else %}
+        <div class="s-name-big">Song Title</div>
+        <div class="s-artist">Artist Name</div>
+      {% endif %}
+    </div>
+    <span class="inline-like" id="inlineLike" onclick="toggleHeart()">♡</span>
+  </div>
+
+  <div class="prog-sec">
+    <div class="prog-times">
+      <span id="ct">0:00</span>
+      <span id="rt">-2:34</span>
+    </div>
+    <div class="prog-bar" id="pb" onclick="seek(event)">
+      <div class="prog-done" id="pd">
+        <div class="prog-circle"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ctrls">
+    <div class="ctbtn">⇄</div>
+    <a href="{{ url_for('player', index=prev_index) }}" class="ctbtn">⏮</a>
+    <div class="ct-main" id="ppbtn" onclick="togglePlay()">⏸</div>
+    <a href="{{ url_for('player', index=next_index) }}" class="ctbtn">⏭</a>
+    <div class="ctbtn">🎚</div>
+  </div>
+
+  <div class="lyrics">
+    <div class="lyrics-lbl">Lyrics</div>
+    <div class="lyrics-arr">⌄</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+// ---- LIKE ----
+let liked = false;
+function toggleHeart() {
+  liked = !liked;
+  const topH = document.getElementById('heartBtn');
+  const inlineL = document.getElementById('inlineLike');
+  topH.textContent = liked ? '♥' : '♡';
+  topH.classList.toggle('liked', liked);
+  inlineL.textContent = liked ? '♥' : '♡';
+  inlineL.classList.toggle('liked', liked);
+}
+
+// ---- PLAYER ----
+let playing = true, pct = 0, tmr;
+const total = 154;
+
+function startTimer() {
+  clearInterval(tmr);
+  tmr = setInterval(() => {
+    pct = Math.min(pct + 0.4, 100);
+    document.getElementById('pd').style.width = pct + '%';
+    let cur = Math.floor(total * pct / 100);
+    let rem = total - cur;
+    document.getElementById('ct').textContent =
+      `${Math.floor(cur/60)}:${String(cur%60).padStart(2,'0')}`;
+    document.getElementById('rt').textContent =
+      `-${Math.floor(rem/60)}:${String(rem%60).padStart(2,'0')}`;
+    if (pct >= 100) {
+      clearInterval(tmr); playing = false;
+      document.getElementById('ppbtn').textContent = '▶';
+      document.getElementById('disc').classList.remove('spinning');
+    }
+  }, 180);
+}
+
+function togglePlay() {
+  playing = !playing;
+  document.getElementById('ppbtn').textContent = playing ? '⏸' : '▶';
+  document.getElementById('disc').classList.toggle('spinning', playing);
+  if (playing) startTimer(); else clearInterval(tmr);
+}
+
+function seek(e) {
+  const b = document.getElementById('pb');
+  const r = b.getBoundingClientRect();
+  pct = Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100));
+  document.getElementById('pd').style.width = pct + '%';
+}
+
+startTimer();
+</script>
+{% endblock %}

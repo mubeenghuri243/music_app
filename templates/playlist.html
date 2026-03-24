@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% set active_nav = 'playlist' %}
+
+{% block content %}
+<div class="playlist-bg">
+  <div class="topbar">
+    <a href="{{ url_for('user_search') }}" class="back">←</a>
+    <div class="tb-title">My Music</div>
+    <span class="dots">···</span>
+  </div>
+
+  <div class="pl-tabs">
+    <button class="tab on">All</button>
+    <button class="tab">Playlist</button>
+    <button class="tab">Liked Songs</button>
+    <button class="tab">Download</button>
+  </div>
+
+  {% if results %}
+    {% set colors = ['t1','t2','t3','t4','t5','t6'] %}
+    {% set emojis = ['🎵','🎶','🎸','🎹','🥁','🎷'] %}
+    {% for song in results %}
+
+      <a href="{{ url_for('player', index=loop.index0) }}" class="plsong {% if loop.first %}playing{% endif %}">
+     
+      <div class="pls-thumb {{ colors[loop.index0 % 6] }}">{{ emojis[loop.index0 % 6] }}</div>
+      <div class="pls-info">
+        <div class="pls-name">{{ song.title }}</div>
+        <div class="pls-sub">{{ song.artist }} · {{ song.genre }}</div>
+      </div>
+      <span class="s-like {% if loop.first %}liked{% endif %}"
+            onclick="toggleLike(event, this)">
+        {% if loop.first %}♥{% else %}♡{% endif %}
+      </span>
+      {% if loop.first %}
+        <div class="eq">
+          <div class="eqb"></div><div class="eqb"></div>
+          <div class="eqb"></div><div class="eqb"></div>
+        </div>
+      {% else %}
+        <div class="pls-play">▶</div>
+      {% endif %}
+    </a>
+    {% endfor %}
+  {% else %}
+    <div style="padding:40px 20px;text-align:center;color:#555;font-size:14px;">
+      No songs found.<br>Go back and search something 🎵
+    </div>
+  {% endif %}
+</div>
+
+<!-- Mini Player -->
+{% if results %}
+<a href="{{ url_for('player') }}" class="mini-pl">
+  <div class="mpl-thumb">🎵</div>
+  <div class="mpl-info">
+    <div class="mpl-name">{{ results[0].title }}</div>
+    <div class="mpl-art">{{ results[0].artist }}</div>
+  </div>
+  <div class="mpl-ctrl"><span>⏸</span><span>⏭</span></div>
+</a>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleLike(event, el) {
+  event.preventDefault();
+  event.stopPropagation();
+  el.classList.toggle('liked');
+  el.textContent = el.classList.contains('liked') ? '♥' : '♡';
+}
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', function() {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+    this.classList.add('on');
+  });
+});
+</script>
+{% endblock %}

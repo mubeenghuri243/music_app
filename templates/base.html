@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Melodiq</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<div class="phone {% block phone_class %}{% endblock %}">
+
+  <!-- Status Bar -->
+  <div class="status"><span>9:41</span><span>▲ 🔋</span></div>
+
+  <!-- Page Content -->
+  {% block content %}{% endblock %}
+
+  <!-- Bottom Nav -->
+  <div class="bnav">
+    <a href="{{ url_for('home') }}" class="bni {% if active_nav == 'home' %}bon{% endif %}">
+      <i class="fa-solid fa-house bni-icon"></i>
+      <span class="bni-lbl">Home</span>
+    </a>
+    <a href="{{ url_for('user_search') }}" class="bni {% if active_nav == 'search' %}bon{% endif %}">
+      <i class="fa-solid fa-magnifying-glass bni-icon"></i>
+      <span class="bni-lbl">Search</span>
+    </a>
+    <a href="{{ url_for('playlist') }}" class="bni {% if active_nav == 'playlist' %}bon{% endif %}">
+      <i class="fa-solid fa-music bni-icon"></i>
+      <span class="bni-lbl">Playlist</span>
+    </a>
+    <a href="{{ url_for('history') }}" class="bni {% if active_nav == 'player' %}bon{% endif %}">
+      <i class="fa-solid fa-user bni-icon"></i>
+      <span class="bni-lbl">Profile</span>
+    </a>
+    
+    
+  </div>
+
+</div>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>
